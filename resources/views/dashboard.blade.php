@@ -31,11 +31,11 @@
                         Statistics
                     </a> -->
 
-                    <a href="{{ route('profile.edit') }}"
+                    <!-- <a href="{{ route('profile.edit') }}"
                         class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white">
                         <span>⚙</span>
                         Settings
-                    </a>
+                    </a> -->
                 </nav>
 
                 <div class="mt-auto">
