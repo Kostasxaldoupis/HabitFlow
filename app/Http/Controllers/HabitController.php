@@ -18,8 +18,9 @@ class HabitController extends Controller
 
         $request->user()->habits()->create($validated);
 
-        return redirect()->route('dashboard')
-            ->with('success', 'Habit created successfully!');
+        return redirect()->route('dashboard', [
+            'week' => request('week', now()->startOfWeek(Carbon::MONDAY)->toDateString()),
+        ])->with('success', 'Habit created successfully!');
     }
 
     // Toggle a habit completion
@@ -59,7 +60,8 @@ class HabitController extends Controller
 
         $habit->delete();
 
-        return redirect()->route('dashboard')
-            ->with('success', 'Habit deleted successfully!');
+        return redirect()->route('dashboard', [
+            'week' => request('week', now()->startOfWeek(Carbon::MONDAY)->toDateString()),
+        ])->with('success', 'Habit deleted successfully!');
     }
 }

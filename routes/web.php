@@ -5,9 +5,15 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HabitController;
 use Illuminate\Support\Facades\Auth;
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+// direct user either to dashboard or login
+Route::get('/', function () {
+    if (Auth::check()) {
+        return redirect()->route('dashboard');
+    }
+
+    return redirect()->route('login');
+});
+
 
 
 
@@ -15,20 +21,31 @@ Route::get('/dashboard', function () {
     /** @var \App\Models\User $user */
     $user = Auth::user();
 
+    // Calculate the selected week's Monday
     $weekStart = \Illuminate\Support\Carbon::parse(
-        request('week', now()->startOfWeek()->toDateString())
-    )->startOfWeek();
+        request('week', now()->toDateString())
+    )->startOfWeek(\Illuminate\Support\Carbon::MONDAY);
 
+    // Prevent navigation into future weeks
+    $currentWeek = now()->startOfWeek(\Illuminate\Support\Carbon::MONDAY);
+
+    if ($weekStart->greaterThan($currentWeek)) {
+        $weekStart = $currentWeek;
+    }
+
+    // Generate Monday through Sunday
     $days = collect(range(0, 6))->map(
         fn ($i) => $weekStart->copy()->addDays($i)
     );
 
+    // Load habits and their completion records
     $habits = $user->habits()
         ->with('completions')
         ->get();
 
     return view('dashboard', compact('habits', 'days', 'weekStart'));
 })->middleware('auth')->name('dashboard');
+
 
 
 

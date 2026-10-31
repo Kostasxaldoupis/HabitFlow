@@ -158,15 +158,31 @@
                         </div>
 
                         <div class="flex items-center gap-3">
-                            <button type="button"
-                                class="px-3 py-2 rounded-lg bg-gray-800 text-gray-300 hover:bg-gray-700">
+                            <!-- Previous week -->
+                            <a href="{{ route('dashboard', ['week' => $weekStart->copy()->subWeek()->toDateString()]) }}"
+                                class="px-3 py-2 rounded-lg bg-gray-800 text-gray-300 hover:bg-gray-700 transition">
                                 ←
-                            </button>
-                            <span class="text-sm font-medium">This week</span>
-                            <button type="button"
-                                class="px-3 py-2 rounded-lg bg-gray-800 text-gray-300 hover:bg-gray-700">
-                                →
-                            </button>
+                            </a>
+
+                            <!-- Selected week -->
+                            <span class="text-sm font-medium text-gray-300">
+                                {{ $weekStart->format('d M') }}
+                                -
+                                {{ $weekStart->copy()->addDays(6)->format('d M Y') }}
+                            </span>
+
+                            <!-- Next week -->
+                            @if($weekStart->copy()->addWeek()->lte($currentWeek ?? now()->startOfWeek(\Illuminate\Support\Carbon::MONDAY)))
+                                <a href="{{ route('dashboard', ['week' => $weekStart->copy()->addWeek()->toDateString()]) }}"
+                                    class="px-3 py-2 rounded-lg bg-gray-800 text-gray-300 hover:bg-gray-700 transition">
+                                    →
+                                </a>
+                            @else
+                                <span class="px-3 py-2 rounded-lg bg-gray-800 text-gray-600 opacity-40 cursor-not-allowed">
+                                    →
+                                </span>
+                            @endif
+
                         </div>
                     </div>
 
@@ -226,7 +242,7 @@
 
                                                     <button type="submit"
                                                         class="w-8 h-8 rounded-lg transition
-                                                                        {{ $completed ? 'bg-green-500 hover:bg-green-400' : 'bg-gray-700 hover:bg-gray-600' }}"
+                                                        {{ $completed ? 'bg-green-500 hover:bg-green-400' : 'bg-gray-700 hover:bg-gray-600' }}"
                                                         title="{{ $completed ? 'Mark incomplete' : 'Mark complete' }}">
                                                         @if($completed)
                                                             ✓
