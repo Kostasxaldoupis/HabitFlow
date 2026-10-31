@@ -25,11 +25,11 @@
                         Dashboard
                     </a>
 
-                    <a href="#"
+                    <!-- <a href="#"
                         class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white">
                         <span>◷</span>
                         Statistics
-                    </a>
+                    </a> -->
 
                     <a href="{{ route('profile.edit') }}"
                         class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white">
