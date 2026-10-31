@@ -140,7 +140,7 @@
                         <p class="text-sm text-gray-400">Today's progress</p>
                         <h2 class="text-3xl font-bold text-indigo-400 mt-3">{{ $progress }}%</h2>
                         <div class="w-full h-2 bg-gray-700 rounded-full mt-4 overflow-hidden">
-                            <div class="h-full bg-indigo-500 rounded-full" style="width: {{ $progress }}%"></div>
+                            <div class="h-full bg-indigo-500 rounded-full" @style(['width' => $progress . '%'])></div>
                         </div>
                     </div>
 
