@@ -204,59 +204,112 @@
                             </div>
 
                             <!-- Habit rows -->
-                            <!-- Habit rows -->
+
                             @forelse($habits as $habit)
-                                <div class="grid grid-cols-[180px_repeat(7,minmax(0,1fr))] gap-3 items-center mb-4">
+                                <div class="mb-4">
 
-                                    <!-- Habit name and delete button -->
-                                    <div class="flex items-center justify-between gap-2">
-                                        <span class="text-sm font-medium text-gray-200">
-                                            {{ $habit->name }}
-                                        </span>
+                                    <!-- Habit row -->
+                                    <div class="grid grid-cols-[180px_repeat(7,minmax(0,1fr))] gap-3 items-center">
 
-                                        <form action="{{ route('habits.destroy', $habit) }}" method="POST"
-                                            onsubmit="return confirm('Are you sure you want to delete this habit?')">
-                                            @csrf
-                                            @method('DELETE')
+                                        <!-- Habit name and actions -->
+                                        <div class="flex items-center justify-between gap-2">
+                                            <span class="text-sm font-medium text-gray-200">
+                                                {{ $habit->name }}
+                                            </span>
 
-                                            <button type="submit" class="text-red-400 hover:text-red-300"
-                                                title="Delete habit">
-                                                🗑
-                                            </button>
-                                        </form>
-                                    </div>
+                                            <div class="flex items-center gap-2">
+                                                <button type="button"
+                                                    onclick="document.getElementById('edit-habit-{{ $habit->id }}').classList.toggle('hidden')"
+                                                    class="text-gray-500 hover:text-indigo-400 transition"
+                                                    title="Edit habit">
+                                                    ✎
+                                                </button>
 
-                                    <!-- Daily completion buttons -->
-                                    @foreach($days as $day)
-                                        @php
-                                            $completed = $habit->completions->contains(
-                                                fn($completion) => $completion->completed_on->toDateString() === $day->toDateString()
-                                            );
-
-                                            $isFuture = $day->toDateString() > now()->toDateString();
-                                        @endphp
-
-                                        <div class="flex justify-center">
-                                            @if(!$isFuture)
-                                                <form action="{{ route('habits.toggle', $habit) }}" method="POST">
+                                                <form action="{{ route('habits.destroy', $habit) }}" method="POST"
+                                                    onsubmit="return confirm('Are you sure you want to delete this habit?')">
                                                     @csrf
+                                                    @method('DELETE')
 
-                                                    <input type="hidden" name="date" value="{{ $day->toDateString() }}">
+                                                    <input type="hidden" name="week"
+                                                        value="{{ $weekStart->toDateString() }}">
 
-                                                    <button type="submit"
-                                                        class="w-8 h-8 rounded-lg transition
-                                                                                                                    {{ $completed ? 'bg-green-500 hover:bg-green-400' : 'bg-gray-700 hover:bg-gray-600' }}"
-                                                        title="{{ $completed ? 'Mark incomplete' : 'Mark complete' }}">
-                                                        @if($completed)
-                                                            ✓
-                                                        @endif
+                                                    <button type="submit" class="text-red-400 hover:text-red-300"
+                                                        title="Delete habit">
+                                                        🗑
                                                     </button>
                                                 </form>
-                                            @else
-                                                <div class="w-8 h-8 rounded-lg bg-gray-800 opacity-40"></div>
-                                            @endif
+                                            </div>
                                         </div>
-                                    @endforeach
+
+                                        <!-- Daily completion buttons -->
+                                        @foreach($days as $day)
+                                            @php
+                                                $completed = $habit->completions->contains(
+                                                    fn($completion) => $completion->completed_on->toDateString() === $day->toDateString()
+                                                );
+
+                                                $isFuture = $day->toDateString() > now()->toDateString();
+                                            @endphp
+
+                                            <div class="flex justify-center">
+                                                @if(!$isFuture)
+                                                    <form action="{{ route('habits.toggle', $habit) }}" method="POST">
+                                                        @csrf
+                                                        <input type="hidden" name="date" value="{{ $day->toDateString() }}">
+
+                                                        <button type="submit"
+                                                            class="w-8 h-8 rounded-lg transition {{ $completed ? 'bg-green-500 hover:bg-green-400' : 'bg-gray-700 hover:bg-gray-600' }}"
+                                                            title="{{ $completed ? 'Mark incomplete' : 'Mark complete' }}">
+                                                            @if($completed)
+                                                                ✓
+                                                            @endif
+                                                        </button>
+                                                    </form>
+                                                @else
+                                                    <div class="w-8 h-8 rounded-lg bg-gray-800 opacity-40"></div>
+                                                @endif
+                                            </div>
+                                        @endforeach
+                                    </div>
+
+                                    <!-- Edit form -->
+                                    <div id="edit-habit-{{ $habit->id }}"
+                                        class="hidden mt-3 p-4 rounded-xl bg-gray-800 border border-gray-700">
+
+                                        <form action="{{ route('habits.update', $habit) }}" method="POST" class="space-y-3">
+                                            @csrf
+                                            @method('PUT')
+
+                                            <input type="hidden" name="week" value="{{ $weekStart->toDateString() }}">
+
+                                            <div>
+                                                <label class="block text-xs text-gray-400 mb-1">Habit name</label>
+                                                <input type="text" name="name" value="{{ $habit->name }}" required
+                                                    maxlength="255"
+                                                    style="color: white !important; background-color: #111827 !important; caret-color: white !important; -webkit-text-fill-color: white !important;"
+                                                    class="w-full rounded-lg border border-gray-700 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none" />
+                                            </div>
+
+                                            <div>
+                                                <label class="block text-xs text-gray-400 mb-1">Habit color</label>
+                                                <input type="color" name="color" value="{{ $habit->color }}" required
+                                                    class="h-9 w-16 rounded cursor-pointer bg-transparent">
+                                            </div>
+
+                                            <div class="flex justify-end gap-2">
+                                                <button type="button"
+                                                    onclick="document.getElementById('edit-habit-{{ $habit->id }}').classList.add('hidden')"
+                                                    class="px-3 py-2 rounded-lg text-gray-400 hover:text-white text-sm">
+                                                    Cancel
+                                                </button>
+
+                                                <button type="submit"
+                                                    class="px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm">
+                                                    Save changes
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
 
                                 </div>
                             @empty
@@ -264,7 +317,6 @@
                                     You haven't added any habits yet. Create your first habit above!
                                 </p>
                             @endforelse
-
                         </div>
                     </div>
 

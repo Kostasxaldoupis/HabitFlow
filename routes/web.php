@@ -35,7 +35,7 @@ Route::get('/dashboard', function () {
 
     // Generate Monday through Sunday
     $days = collect(range(0, 6))->map(
-        fn ($i) => $weekStart->copy()->addDays($i)
+        fn($i) => $weekStart->copy()->addDays($i)
     );
 
     // Load habits and their completion records
@@ -60,6 +60,9 @@ Route::middleware('auth')->group(function () {
         ->name('habits.destroy');
 
     Route::post('/habits', [HabitController::class, 'store'])->name('habits.store');
+
+    Route::put('/habits/{habit}', [HabitController::class, 'update'])
+        ->name('habits.update');
 
 
     // PROFILE

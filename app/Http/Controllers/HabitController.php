@@ -23,6 +23,23 @@ class HabitController extends Controller
         ])->with('success', 'Habit created successfully!');
     }
 
+    public function update(Request $request, Habit $habit)
+    {
+        // make sure the habit belongs to the loggedin user
+        abort_unless($habit->user_id === $request->user()->id, 403);
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'color' => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+        ]);
+
+        $habit->update($validated);
+
+        return redirect()->route('dashboard', [
+            'week' => $request->input('week', now()->startOfWeek()->toDateString()),
+        ])->with('success', 'Habit updated successfully!');
+    }
+
     // Toggle a habit completion
     public function toggle(Request $request, Habit $habit)
     {
