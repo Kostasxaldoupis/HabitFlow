@@ -170,7 +170,6 @@
                                 -
                                 {{ $weekStart->copy()->addDays(6)->format('d M Y') }}
                             </span>
-
                             <!-- Next week -->
                             @if($weekStart->copy()->addWeek()->lte($currentWeek ?? now()->startOfWeek(\Illuminate\Support\Carbon::MONDAY)))
                                 <a href="{{ route('dashboard', ['week' => $weekStart->copy()->addWeek()->toDateString()]) }}"
@@ -182,6 +181,10 @@
                                     →
                                 </span>
                             @endif
+                            <a href="{{ route('dashboard') }}"
+                                class="px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm transition">
+                                Today
+                            </a>
 
                         </div>
                     </div>
@@ -242,7 +245,7 @@
 
                                                     <button type="submit"
                                                         class="w-8 h-8 rounded-lg transition
-                                                        {{ $completed ? 'bg-green-500 hover:bg-green-400' : 'bg-gray-700 hover:bg-gray-600' }}"
+                                                                                                                    {{ $completed ? 'bg-green-500 hover:bg-green-400' : 'bg-gray-700 hover:bg-gray-600' }}"
                                                         title="{{ $completed ? 'Mark incomplete' : 'Mark complete' }}">
                                                         @if($completed)
                                                             ✓
